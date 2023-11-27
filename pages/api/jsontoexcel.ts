@@ -7,25 +7,25 @@ type ResponseData = {
 };
 
 type RequestBody = {
-    transactions: string;
+    collection: string;
 };
 
 export default function handler(
     req: NextApiRequest,
     res: NextApiResponse<ResponseData>
 ) {
-    let { transactions }: RequestBody = req.body;
-    transactions = JSON.parse(transactions);
-    // create worksheet for the transactions
-    var ws = xlsx.utils.json_to_sheet(transactions);
+    let { collection }: RequestBody = req.body;
+    collection = JSON.parse(collection);
+    // create worksheet for the collection
+    var ws = xlsx.utils.json_to_sheet(collection);
     // create new workbook to store the ws
     let wb = xlsx.utils.book_new();
     // append the worksheet to the workbook
     xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
     // generate a bytes file to return to the user
     let file = xlsx.write(wb, { bookType: "xlsx", type: "base64" });
-    const lenOfColumns = Object.keys(transactions[0]).length;
-    let tableRange = `A1:${calcBottomRange(lenOfColumns)}${lenOfColumns}`;
+    const lenOfColumns = Object.keys(collection[0]).length;
+    let tableRange = `A1:${calcBottomRange(lenOfColumns)}${collection.length + 1}`;
     res.status(200).json({ json: file, tableRange });
 }
 
